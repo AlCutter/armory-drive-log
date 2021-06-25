@@ -32,6 +32,17 @@ type VerifyInclusion func(leafIndex, treeSize int64, proof [][]byte, root []byte
 
 // Bundle verifies that the Bundle is self-consistent, and consistent with the provided
 // smaller checkpoint from the device.
+//
+// For a ProofBundle to be considered good, we need to:
+//  1. check the signature on the new Checkpoint contained within
+//  2. check that the provided consistency proof is valid between the device's previously seen Checkpoint and the new Checkpoint
+//  3. check that the provided inclusion proof is valid between the serialised FirmwareRelease and the new Checkpoint
+//  4. check that the signature on the FirmwareRelease manifest is valid
+//  4. check that the hash of the firmware update (IMX) is the same as the FirmwareRelease manifest claims it should be.
+//
+// If all of these checks hold, then we are sufficiently convinced that the firmware update is discoverable by others.
+//
+// TODO(al): Extend to support witnesses.
 func Bundle(pb api.ProofBundle, oldCP api.Checkpoint, logSigV note.Verifier, frSigV note.Verifier, cpVerifier VerifyConsistency, ipVerifier VerifyInclusion, firmwareHash []byte) error {
 	// First, check the signature on the new CP.
 	newCP := &api.Checkpoint{}
