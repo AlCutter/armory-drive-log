@@ -29,6 +29,10 @@ type ProofBundle struct {
 	// FirmwareRelease struct.
 	FirmwareRelease []byte
 
+	// LeafIndex is the index in the log where FirmwareRelease can be found.
+	// Used to verify the InclusionProof below.
+	LeafIndex int64
+
 	// InclusionProof is the proof of inclusion for FirmwareRelease under NewCheckpoint.
 	InclusionProof [][]byte
 
